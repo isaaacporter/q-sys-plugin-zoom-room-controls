@@ -1,0 +1,52 @@
+{
+    "adapters": [
+      {
+        "model": "GenericNetworkAdapter",
+        "ip": "tcp://192.168.0.2:50000",
+        "ports": [
+          {
+            "id": "generic_curtain",
+            "name": "Curtain",
+            "methods": [
+              {
+                "id": "power",
+                "name": "Power",
+                "command": "curtain %\r",
+                "params": [
+                  {
+                    "id": "open",
+                    "name": "Open",
+                    "value": "open"
+                  },
+                  {
+                    "id": "close",
+                    "name": "Close",
+                    "value": "close"
+                  }
+                ],
+                "type": "actions"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "styles": [
+      "generic_curtain.main_method=power",
+      "generic_curtain.icon=icon_curtain"
+    ],
+    "rules": {
+      "meeting_started": [
+      ],
+      "meeting_ended": [
+      ],
+      "microphone_muted": [
+      ],
+      "microphone_unmuted": [
+      ],
+      "video_started": [
+      ],
+      "video_stopped": [
+      ]
+    }
+  }

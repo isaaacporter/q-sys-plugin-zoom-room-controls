@@ -1,0 +1,302 @@
+-- Information block for the plugin
+PluginInfo = {
+  Name = "Zoom Room Controls",
+  Description = "Zoom Room Controls with TCP Server",
+  Version = "1.0",
+  BuildVersion = "1.0.0.0",
+  Id = "0ece9fdd-43cb-4868-bd4f-a598aa15fd15",
+  Author = "Isaac Porter",
+} 
+
+-- Define the color of the plugin object in the design
+function GetColor(props)
+  return {45, 140, 255}
+end
+
+-- The name that will initially display when dragged into a design
+function GetPrettyName(props)
+  return "Zoom\nRoom Controls\n" .. PluginInfo.Version
+end
+
+-- Optional function used if plugin has multiple pages
+PageNames = {"Main"} --List the pages within the plugin
+function GetPages(props)
+  local pages = {}
+  for ix,name in ipairs(PageNames) do
+    table.insert(pages, {name = PageNames[ix]})
+  end
+  return pages
+end
+
+-- Optional function to define model if plugin supports more than one model
+function GetModel(props)
+  local model = {}
+ return model
+end
+
+-- Define User configurable Properties of the plugin
+function GetProperties()
+  local props = {}
+  table.insert(props, {
+    Name = "Command Count",
+    Type = "integer",
+    Value = 8,
+    Min = 1,
+    Max = 64
+  })
+  
+  
+  return props
+end
+
+-- Optional function to define pins on the plugin that are not connected to a Control
+function GetPins(props)
+  local pins = {}
+  return pins
+end
+
+-- Optional function to update available properties when properties are altered by the user
+function RectifyProperties(props)
+  return props
+end
+
+-- Optional function to define components used within the plugin
+function GetComponents(props)
+  local components = {}
+  -- Optional function to define components used within the plugin
+  function GetComponents(props)
+    local components = {}
+    return components
+  end
+  return components
+end
+
+-- Optional function to define wiring of components used within the plugin
+function GetWiring(props)
+  local wiring = {}
+  return wiring
+end
+
+-- Defines the Controls used within the plugin
+function GetControls(props)
+  local ctrls = {}
+  table.insert(ctrls, {
+    Name = "Status",
+    ControlType = "Indicator",
+    IndicatorType = "Status",
+    UserPin = true,
+    PinStyle = "Output"
+  })
+  table.insert(ctrls, {
+    Name = "Port",
+    ControlType = "Knob",
+    ControlUnit = "Integer",
+    DefaultValue = 50000,
+    Min = 1,
+    Max = 65535,
+    UserPin = true,
+    PinStyle = "Both"
+  })
+  for idx = 1, props["Command Count"].Value do
+    table.insert(ctrls, {
+      Name = "command."..idx..".trigger",
+      ControlType = "Button",
+      ButtonType = "Trigger",
+      Count = 1,
+      UserPin = true,
+      PinStyle = "Output",
+    })
+    table.insert(ctrls, {
+      Name = "command."..idx..".string",
+      ControlType = "Text",
+      IndicatorType = "Text",
+      Count = 1,
+      UserPin = true,
+      PinStyle = "Both",
+    })
+  end
+  return ctrls
+end
+
+--Layout of controls and graphics for the plugin UI to display
+function GetControlLayout(props)
+  local layout = {}
+  local graphics = {}
+  local CurrentPage = PageNames[props["page_index"].Value]
+  if CurrentPage == "Main" then
+    table.insert(graphics,{
+      Type = "Text",
+      Text = "Status",
+      FontSize = 11,
+      HTextAlign = "Left",
+      Position = {0, 0},
+      Size = {60, 32}
+    })
+    layout["Status"] = {
+      PrettyName = "Status",
+      Style = "Text",
+      Margin = 0,
+      CornerRadius = 0,
+      Color = {194, 194, 194},
+      Position = {63, 0},
+      Size = {159, 32}
+    }
+    table.insert(graphics,{
+      Type = "Text",
+      Text = "Port",
+      FontSize = 11,
+      HTextAlign = "Left",
+      Position = {0, 35},
+      Size = {60, 16}
+    })
+    layout["Port"] = {
+      PrettyName = "Status",
+      Style = "Text",
+      Margin = 0,
+      CornerRadius = 0,
+      Color = {110, 198, 241},
+      Position = {63, 35},
+      Size = {120, 16}
+    }
+    for idx = 1, props["Command Count"].Value do
+      layout["command."..idx..".trigger"] = {
+        PrettyName = "Command "..idx.."~Trigger",
+        Style = "Button",
+        Margin = 0,
+        Position = {186, 35 + (19 * idx)},
+        Size = {36, 16}
+      }
+      layout["command."..idx..".string"] = {
+        PrettyName = "Command "..idx.."~String",
+        Style = "Text",
+        Margin = 0,
+        CornerRadius = 0,
+        Color = {255, 255, 255},
+        Position = {0, 35 + (19 * idx)},
+        Size = {183, 16}
+      }
+    end
+  end
+  return layout, graphics
+end
+
+--Start event based logic
+if Controls then
+  -- Status
+  -- Have an interior status table to aggregate statuses
+  internalStatus = {}-- Each entry should be a table with:
+  -- reason: string
+  -- state: number
+  --    0: OK (green)
+  --    1: Compromised (orange)
+  --    2: Fault (red)
+  --    3: Not Present (gray)
+  --    4: Missing (dark red)
+  --    -1: Initializing (light blue)
+  statusUpdater = Timer.New()
+  statusUpdater.EventHandler = function()
+    local status = -1
+    local reason = ""
+    for k, v in pairs(internalStatus) do
+      if v.status > status then
+        status = v.status
+        reason = v.reason
+      elseif v.status == status then
+        if reason == "" then
+          reason = v.reason
+        else
+          reason = reason .. ", " .. v.reason
+        end
+      end
+    end
+    if status == -1 then status = 5 end -- Remap to QSYS values
+    if reason == "" then
+      Controls["Status"].Value = status
+      Controls["Status"].String = ""
+    else
+      Controls["Status"].Value = status
+      Controls["Status"].String = reason
+    end
+  end
+  statusUpdater:Start(1)
+  
+  
+  server = TcpSocketServer.New()
+  
+  -- table to store connected client sockets
+  -- this is required so the sockets don't
+  -- get garbage collected since there aren't
+  -- any other references to them in the script
+  sockets = {}
+  
+  function RemoveSocketFromTable(sock)
+    for k,v in pairs(sockets) do
+      if v == sock then 
+        table.remove(sockets, k) 
+        if #sockets == 0 then
+          internalStatus["plugin"] = {
+            status = 4,
+            reason = "No clients connected"
+          }
+        end
+        return
+      end
+    end
+  end
+  
+  function RemoveAllSocketFromTable()
+    for k,v in pairs(sockets) do
+      v:Disconnect()
+      table.remove(sockets, k) 
+    end
+    internalStatus["plugin"] = {
+      status = 4,
+      reason = "No clients connected"
+    }
+  end
+  
+  function ParseResponse(dataToParse)
+    dataToParse = dataToParse:gsub("[\n\r]", "")
+    print("TCP Data Received:"..dataToParse..":")
+    for idx = 1, Properties["Command Count"].Value do
+      if dataToParse == Controls["command."..idx..".string"].String then
+        Controls["command."..idx..".trigger"]:Trigger()
+      end
+    end
+  end
+   
+  function SocketHandler(sock, event) -- the arguments for this EventHandler are documented in the EventHandler definition of TcpSocket Properties
+    print( "TCP Socket Event:"..event..":")
+    if event == TcpSocket.Events.Data then
+      ParseResponse(sock:Read(sock.BufferLength))
+    elseif event == TcpSocket.Events.Closed or
+           event == TcpSocket.Events.Error or
+           event == TcpSocket.Events.Timeout then
+      -- remove reference of socket from table so
+      -- it's available for garbage collection
+      RemoveSocketFromTable(sock)
+    end
+  end
+   
+  server.EventHandler = function(SocketInstance) -- the properties of this socket instance are those of the TcpSocket library
+    internalStatus["plugin"] = {
+      status = 0,
+      reason = "Connected"
+    }
+    print( "Got connect", SocketInstance )
+    table.insert(sockets, SocketInstance)
+    SocketInstance.EventHandler = SocketHandler
+  end
+  
+  function StartServerListening()
+    server:Close()
+    RemoveAllSocketFromTable()
+    server:Listen(Controls["Port"].Value) -- This listen port is opened on all network interfaces
+  end
+  
+  Controls["Port"].EventHandler = function()
+    StartServerListening()
+  end
+  
+  StartServerListening()
+end
