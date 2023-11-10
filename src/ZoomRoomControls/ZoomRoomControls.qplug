@@ -3,7 +3,7 @@ PluginInfo = {
   Name = "Zoom Room Controls",
   Description = "Zoom Room Controls with TCP Server",
   Version = "1.0",
-  BuildVersion = "1.0.0.0",
+  BuildVersion = "1.0.1.0",
   Id = "0ece9fdd-43cb-4868-bd4f-a598aa15fd15",
   Author = "Isaac Porter",
 } 
@@ -99,7 +99,7 @@ function GetControls(props)
   })
   for idx = 1, props["Command Count"].Value do
     table.insert(ctrls, {
-      Name = "command."..idx..".trigger",
+      Name = "command_"..idx.."_trigger",
       ControlType = "Button",
       ButtonType = "Trigger",
       Count = 1,
@@ -107,7 +107,7 @@ function GetControls(props)
       PinStyle = "Output",
     })
     table.insert(ctrls, {
-      Name = "command."..idx..".string",
+      Name = "command_"..idx.."_string",
       ControlType = "Text",
       IndicatorType = "Text",
       Count = 1,
@@ -159,14 +159,14 @@ function GetControlLayout(props)
       Size = {120, 16}
     }
     for idx = 1, props["Command Count"].Value do
-      layout["command."..idx..".trigger"] = {
+      layout["command_"..idx.."_trigger"] = {
         PrettyName = "Command "..idx.."~Trigger",
         Style = "Button",
         Margin = 0,
         Position = {186, 35 + (19 * idx)},
         Size = {36, 16}
       }
-      layout["command."..idx..".string"] = {
+      layout["command_"..idx.."_string"] = {
         PrettyName = "Command "..idx.."~String",
         Style = "Text",
         Margin = 0,
@@ -259,8 +259,8 @@ if Controls then
     dataToParse = dataToParse:gsub("[\n\r]", "")
     print("TCP Data Received:"..dataToParse..":")
     for idx = 1, Properties["Command Count"].Value do
-      if dataToParse == Controls["command."..idx..".string"].String then
-        Controls["command."..idx..".trigger"]:Trigger()
+      if dataToParse == Controls["command_"..idx.."_string"].String then
+        Controls["command_"..idx.."_trigger"]:Trigger()
       end
     end
   end

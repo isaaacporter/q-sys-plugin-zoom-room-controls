@@ -35,14 +35,14 @@ if CurrentPage == "Main" then
     Size = {120, 16}
   }
   for idx = 1, props["Command Count"].Value do
-    layout["command."..idx..".trigger"] = {
+    layout["command_"..idx.."_trigger"] = {
       PrettyName = "Command "..idx.."~Trigger",
       Style = "Button",
       Margin = 0,
       Position = {186, 35 + (19 * idx)},
       Size = {36, 16}
     }
-    layout["command."..idx..".string"] = {
+    layout["command_"..idx.."_string"] = {
       PrettyName = "Command "..idx.."~String",
       Style = "Text",
       Margin = 0,

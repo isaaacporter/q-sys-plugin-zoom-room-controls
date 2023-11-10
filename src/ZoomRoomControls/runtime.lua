@@ -75,8 +75,8 @@ function ParseResponse(dataToParse)
   dataToParse = dataToParse:gsub("[\n\r]", "")
   print("TCP Data Received:"..dataToParse..":")
   for idx = 1, Properties["Command Count"].Value do
-    if dataToParse == Controls["command."..idx..".string"].String then
-      Controls["command."..idx..".trigger"]:Trigger()
+    if dataToParse == Controls["command_"..idx.."_string"].String then
+      Controls["command_"..idx.."_trigger"]:Trigger()
     end
   end
 end

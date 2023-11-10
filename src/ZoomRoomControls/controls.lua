@@ -17,7 +17,7 @@ table.insert(ctrls, {
 })
 for idx = 1, props["Command Count"].Value do
   table.insert(ctrls, {
-    Name = "command."..idx..".trigger",
+    Name = "command_"..idx.."_trigger",
     ControlType = "Button",
     ButtonType = "Trigger",
     Count = 1,
@@ -25,7 +25,7 @@ for idx = 1, props["Command Count"].Value do
     PinStyle = "Output",
   })
   table.insert(ctrls, {
-    Name = "command."..idx..".string",
+    Name = "command_"..idx.."_string",
     ControlType = "Text",
     IndicatorType = "Text",
     Count = 1,
