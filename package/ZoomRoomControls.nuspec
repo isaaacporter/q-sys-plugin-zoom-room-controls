@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Template for the Q-SYS Personal Package. build_package.ps1 fills the
+  $token$ values and packs it; do not pack this file directly.
+-->
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>Zoom Room Controls</title>
+    <authors>Isaac Porter</authors>
+    <owners>Isaac Porter</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <icon>content\icon.png</icon>
+    <iconUrl>$iconUrl$</iconUrl>
+    <projectUrl>$projectUrl$</projectUrl>
+    <description>Lets a Zoom Room control a Q-SYS design through Zoom Room Controls. The plugin runs a TCP server; enter the command strings your Room Controls profile sends, and each one fires its own trigger pin when received. Installation via this personal package requires Q-SYS Designer 10.1 or later. Plugin version: $pluginVersion$.</description>
+    <summary>Trigger Q-SYS controls from Zoom Room Controls.</summary>
+    <releaseNotes>$releaseNotes$</releaseNotes>
+    <copyright>2026 Isaac Porter</copyright>
+    <tags>Zoom Rooms Control TCP</tags>
+  </metadata>
+  <files>
+    <file src="$qplug$" target="content" />
+    <file src="$icon$" target="content" />
+  </files>
+</package>

@@ -1,0 +1,43 @@
+{
+  "@id": "https://raw.githubusercontent.com/isaaacporter/q-sys-plugin-zoom-room-controls/main/feed/index.json",
+  "@type": [
+    "catalog:CatalogRoot",
+    "PackageRegistration",
+    "catalog:Permalink"
+  ],
+  "count": 1,
+  "items": [
+    {
+      "@id": "https://raw.githubusercontent.com/isaaacporter/q-sys-plugin-zoom-room-controls/main/feed/index.json",
+      "lower": "1.0.1",
+      "upper": "1.0.1",
+      "count": 1,
+      "items": [
+        {
+          "@id": "https://raw.githubusercontent.com/isaaacporter/q-sys-plugin-zoom-room-controls/main/feed/1.0.1.json",
+          "packageContent": "https://raw.githubusercontent.com/isaaacporter/q-sys-plugin-zoom-room-controls/main/feed/Zoom-Room-Controls.1.0.1.nupkg",
+          "catalogEntry": {
+            "@id": "https://raw.githubusercontent.com/isaaacporter/q-sys-plugin-zoom-room-controls/main/feed/1.0.1.json",
+            "authors": "Isaac Porter",
+            "copyright": "2026 Isaac Porter",
+            "dependencyGroups": [],
+            "description": "Lets a Zoom Room control a Q-SYS design through Zoom Room Controls. The plugin runs a TCP server; enter the command strings your Room Controls profile sends, and each one fires its own trigger pin when received. Installation via this personal package requires Q-SYS Designer 10.1 or later. Plugin version: 1.0.1.0.",
+            "iconUrl": "https://raw.githubusercontent.com/isaaacporter/q-sys-plugin-zoom-room-controls/main/package/icon.png",
+            "id": "Zoom-Room-Controls",
+            "isPrerelease": false,
+            "language": "",
+            "licenseUrl": "",
+            "packageContent": "https://raw.githubusercontent.com/isaaacporter/q-sys-plugin-zoom-room-controls/main/feed/Zoom-Room-Controls.1.0.1.nupkg",
+            "projectUrl": "https://github.com/isaaacporter/q-sys-plugin-zoom-room-controls",
+            "requireLicenseAcceptance": false,
+            "summary": "Trigger Q-SYS controls from Zoom Room Controls.",
+            "tags": "Zoom Rooms Control TCP",
+            "version": "1.0.1",
+            "releaseNotes": "Published as a Q-SYS Personal Package.",
+            "published": "2026-10-28T16:43:22Z"
+          }
+        }
+      ]
+    }
+  ]
+}

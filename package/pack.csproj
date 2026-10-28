@@ -1,0 +1,13 @@
+<!--
+  Pack-only project: lets `dotnet pack` turn the generated nuspec into a
+  .nupkg without nuget.exe. Nothing is compiled. Run build_package.ps1,
+  not this project directly.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoBuild>true</NoBuild>
+    <NuspecFile>$(MSBuildThisFileDirectory)obj\package.nuspec</NuspecFile>
+  </PropertyGroup>
+</Project>
